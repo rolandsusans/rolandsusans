@@ -1,12 +1,12 @@
 ### Hi there 👋
 
 
-- 🔭 I’m currently working in [Printify](https://github.com/printify).
-- 🌱 I’m currently learning typescript and kubernetes.
-- 👯 I’m looking to collaborate on open source projects.
-- 🤔 I'm interested to try out some machine learning. 
-- ⚡ Fun fact: I like longboarding and drones.
-- 🏃 21 km is my persoanl best. 
+- 🔭  I’m currently working in [Printify](https://github.com/printify).
+- 🌱  I’m currently learning typescript and kubernetes.
+- 👯  I’m looking to collaborate on open source projects.
+- 🤔  I'm interested to try out some machine learning. 
+- ⚡  Fun fact: I like longboarding and drones.
+- 🏃  21 km is my persoanl best. 
 
 ![GitHub stats](https://github-readme-stats.vercel.app/api?username=rolandsusans&show_icons=true&theme=dark&count_private=true&hide_border=true)
 
