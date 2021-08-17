@@ -6,5 +6,5 @@
 - 👯 I’m looking to collaborate on open source projects.
 - ⚡ Fun fact: I like longboarding. 
 
-![GitHub stats](https://github-readme-stats.vercel.app/api?username=rolandsusans&show_icons=true&theme=radical&count_private=true)
+![GitHub stats](https://github-readme-stats.vercel.app/api?username=rolandsusans&show_icons=true&theme=dark&count_private=true&hide_border=true)
 
