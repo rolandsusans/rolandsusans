@@ -3,7 +3,6 @@
 
 - 🔭  I’m currently working in [Printify](https://github.com/printify).
 - 🌱  I’m currently learning typescript and kubernetes.
-- 👯  I’m looking to collaborate on open source projects.
 - 🤔  I'm interested to try out some machine learning. 
 - ⚡  Fun fact: I like longboarding and drones.
 - 🏃  21 km is my persoanl best. 
