@@ -7,8 +7,6 @@
 - ⚡  Fun fact: I like longboarding and drones.
 - 🏃  21 km is my persoanl best. 
 
-![GitHub stats](https://github-readme-stats.vercel.app/api?username=rolandsusans&show_icons=true&theme=dark&count_private=true&hide_border=true)
-
 ### Connect with me:
 
 [<img align="left" alt="Rolands Usāns | Keybase" width="27px" src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/keybase.svg" />][keybase]
