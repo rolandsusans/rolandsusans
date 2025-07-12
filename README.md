@@ -29,4 +29,4 @@
 
 <br />
 
-![GitHub stats](https://github-readme-stats.vercel.app/api?username=rolandsusans&show_icons=true&theme=radical)
+![GitHub stats](https://github-readme-stats.vercel.app/api?username=rolandsusans&show_icons=true&theme=radical&include_all_commits=tru)
