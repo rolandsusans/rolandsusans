@@ -25,4 +25,8 @@
 
 <br />
 
-![](https://hit.yhype.me/github/profile?user_id=6154604)
+![](https://hit.yhype.me/github/profile?user_id=6154604)  
+
+<br />
+
+![GitHub stats](https://github-readme-stats.vercel.app/api?username=rolandsusans&show_icons=true&theme=radical)
