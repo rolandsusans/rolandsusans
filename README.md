@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://github.com/rolandsusans">
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=3500&pause=800&color=22D3EE&center=true&vCenter=true&width=620&lines=Hi+there%2C+I'm+Rolands+%F0%9F%91%8B;Software+Engineer+%40+Fyul;TypeScript+%E2%80%A2+Node.js+%E2%80%A2+Kubernetes;Domain-Driven+Design+enthusiast;Longboarder%2C+droner%2C+half-marathoner" alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=3500&pause=800&color=22D3EE&center=true&vCenter=true&width=620&lines=Hi+there%2C+I'm+Rolands+%F0%9F%91%8B;Software+Engineer+%40+Fyul;PHP+veteran+%E2%80%A2+Symfony+%26+Laravel+in+production;TypeScript+%E2%80%A2+Node.js+%E2%80%A2+Kubernetes;Domain-Driven+Design+enthusiast;Longboarder%2C+droner%2C+half-marathoner" alt="Typing SVG" />
   </a>
 </h1>
 
