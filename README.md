@@ -35,7 +35,7 @@ fun-fact:  I tinker with ESP32 + DHT11 air sensors and Netatmo exporters
 
 ---
 
-## 🧠 Focus areas
+## 🔭 Exploring & curious about
 
 <p align="center">
   <img src="https://img.shields.io/badge/LLM%20Engineering-22d3ee?style=for-the-badge&logo=openai&logoColor=white" />
