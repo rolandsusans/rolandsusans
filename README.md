@@ -82,10 +82,4 @@ fun-fact:  I tinker with ESP32 + DHT11 air sensors and Netatmo exporters
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=rolandsusans&theme=tokyo-night&bg_color=0d1117&hide_border=true&line=22d3ee&point=ffffff" />
 </p>
 
----
-
-<p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=4000&pause=99999&color=22D3EE&center=true&vCenter=true&width=720&lines=The+sky's+the+limit+%E2%80%94+only+bounded+by+my+own+imagination." alt="personal motto" />
-</p>
-
 <p align="center"><sub>⚡ Built with caffeine in Riga · last polished 2026</sub></p>
