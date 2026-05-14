@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://github.com/rolandsusans">
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=3500&pause=800&color=22D3EE&center=true&vCenter=true&width=620&lines=Hi+there%2C+I'm+Rolands+%F0%9F%91%8B;Software+Engineer+%40+Fyul;PHP+veteran+%E2%80%A2+Symfony+%26+Laravel+in+production;TypeScript+%E2%80%A2+Node.js+%E2%80%A2+Kubernetes;Domain-Driven+Design+enthusiast;Longboarder%2C+droner%2C+half-marathoner" alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=3500&pause=800&color=22D3EE&center=true&vCenter=true&width=620&lines=Hi+there%2C+I'm+Rolands+%F0%9F%91%8B;Software+Engineer+%40+Fyul;PHP+veteran+%E2%80%A2+Symfony+%26+Laravel+in+production;TypeScript+%E2%80%A2+Node.js+%E2%80%A2+Kubernetes;Passionate+about+GenAIOps+%26+agent+harnesses;Automating+everything+with+n8n+%E2%9A%99%EF%B8%8F;Domain-Driven+Design+enthusiast;Longboarder%2C+droner%2C+half-marathoner" alt="Typing SVG" />
   </a>
 </h1>
 
@@ -27,10 +27,23 @@ name:      Rolands Usāns
 role:      Software Engineer @ Fyul
 location:  Riga, Latvia 🇱🇻
 focus:     building scalable backend services & developer tooling
+passions:  GenAIOps, applied AI, agent harnesses, n8n, end-to-end automation
 learning:  TypeScript deep-dives, Kubernetes internals, applied ML
 hobbies:   longboarding, drones, running (21 km PB 🏃)
 fun-fact:  I tinker with ESP32 + DHT11 air sensors and Netatmo exporters
 ```
+
+---
+
+## 🔥 Currently obsessed with
+
+<p align="center">
+  <img src="https://img.shields.io/badge/GenAIOps-22d3ee?style=for-the-badge&logo=openai&logoColor=white" />
+  <img src="https://img.shields.io/badge/Applied%20AI-7c3aed?style=for-the-badge&logo=anthropic&logoColor=white" />
+  <img src="https://img.shields.io/badge/Agent%20Harnesses-f59e0b?style=for-the-badge&logo=anthropic&logoColor=white" />
+  <img src="https://img.shields.io/badge/n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white" />
+  <img src="https://img.shields.io/badge/Automation-10b981?style=for-the-badge&logo=zapier&logoColor=white" />
+</p>
 
 ---
 
