@@ -1,6 +1,6 @@
 <h1 align="center">
   <a href="https://github.com/rolandsusans">
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=3500&pause=800&color=22D3EE&center=true&vCenter=true&width=620&lines=Hi+there%2C+I'm+Rolands+%F0%9F%91%8B;Software+Engineer+%40+Fyul;PHP+%E2%80%A2+Symfony+%E2%80%A2+Laravel;TypeScript+%E2%80%A2+Node.js+%E2%80%A2+Kubernetes;Passionate+about+GenAIOps+%26+agent+harnesses;Automating+everything+with+n8n+%E2%9A%99%EF%B8%8F;Domain-Driven+Design+enthusiast;Longboarder%2C+droner%2C+half-marathoner" alt="Typing SVG" />
+    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=28&duration=3500&pause=800&color=22D3EE&center=true&vCenter=true&width=620&lines=Hi+there%2C+I'm+Rolands+%F0%9F%91%8B;Software+Engineer+%40+Fyul;PHP+%E2%80%A2+Symfony+%E2%80%A2+Laravel;TypeScript+%E2%80%A2+Node.js+%E2%80%A2+Kubernetes;GenAIOps+%E2%80%A2+Agents+%E2%80%A2+n8n;Domain-Driven+Design+enthusiast;Longboarder%2C+droner%2C+half-marathoner" alt="Typing SVG" />
   </a>
 </h1>
 
