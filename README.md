@@ -84,18 +84,6 @@ fun-fact:  I tinker with ESP32 + DHT11 air sensors and Netatmo exporters
 
 ---
 
-## 📌 Pinned tinkerings
-
-| Project | What it is |
-| --- | --- |
-| [`netatmo-aircare-prometheus-exporter`](https://github.com/rolandsusans/netatmo-aircare-prometheus-exporter) | Go exporter that scrapes Netatmo Aircare metrics into Prometheus. |
-| [`dht11-esp32`](https://github.com/rolandsusans/dht11-esp32) | ESP32 + DHT11 firmware for ambient sensing. |
-| [`kindergarten`](https://github.com/rolandsusans/kindergarten) | Browsable list of kindergartens in Latvia. |
-| [`php-console-print-lib`](https://github.com/rolandsusans/php-console-print-lib) | Tiny PHP lib for colourful terminal output. |
-| [`cache-comparsion`](https://github.com/rolandsusans/cache-comparsion) | Benchmarks for storing PHP objects across cache backends. |
-
----
-
 <p align="center">
   <img src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=tokyonight" />
 </p>
