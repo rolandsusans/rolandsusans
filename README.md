@@ -35,14 +35,14 @@ fun-fact:  I tinker with ESP32 + DHT11 air sensors and Netatmo exporters
 
 ---
 
-## 🔥 Currently obsessed with
+## 🧠 Focus areas
 
 <p align="center">
-  <img src="https://img.shields.io/badge/GenAIOps-22d3ee?style=for-the-badge&logo=openai&logoColor=white" />
-  <img src="https://img.shields.io/badge/Applied%20AI-7c3aed?style=for-the-badge&logo=anthropic&logoColor=white" />
-  <img src="https://img.shields.io/badge/Agent%20Harnesses-f59e0b?style=for-the-badge&logo=anthropic&logoColor=white" />
-  <img src="https://img.shields.io/badge/n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white" />
-  <img src="https://img.shields.io/badge/Automation-10b981?style=for-the-badge&logo=zapier&logoColor=white" />
+  <img src="https://img.shields.io/badge/LLM%20Engineering-22d3ee?style=for-the-badge&logo=openai&logoColor=white" />
+  <img src="https://img.shields.io/badge/Agentic%20Systems-7c3aed?style=for-the-badge&logo=anthropic&logoColor=white" />
+  <img src="https://img.shields.io/badge/Agent%20Evaluation-f59e0b?style=for-the-badge&logo=anthropic&logoColor=white" />
+  <img src="https://img.shields.io/badge/LLMOps-2563eb?style=for-the-badge&logo=mlflow&logoColor=white" />
+  <img src="https://img.shields.io/badge/Workflow%20Orchestration-10b981?style=for-the-badge&logo=n8n&logoColor=white" />
 </p>
 
 ---
