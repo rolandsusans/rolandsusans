@@ -58,14 +58,20 @@ fun-fact:  I tinker with ESP32 + DHT11 air sensors and Netatmo exporters
 ## 📊 GitHub stats
 
 <p align="center">
-  <img src="./metrics/overview.svg" width="48%" alt="Activity and repositories overview" />
-  <img src="./metrics/languages.svg" width="48%" alt="Most used languages" />
+  <a href="https://rolandsusans.github.io/rolandsusans/">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./assets/card-dark.svg" />
+      <source media="(prefers-color-scheme: light)" srcset="./assets/card-light.svg" />
+      <img src="./assets/card-dark.svg" alt="GitHub stats: contributions in the last year, commits, pull requests, reviews, repositories and best streak" width="860" />
+    </picture>
+  </a>
 </p>
 
 <p align="center">
-  <img src="./metrics/calendar.svg" width="96%" alt="Contributions calendar and commit streaks" />
+  <a href="https://rolandsusans.github.io/rolandsusans/"><b>→ Open the interactive dashboard</b></a><br />
+  <sub>Hover the calendar, switch the range, filter by language, sort the repositories.</sub>
 </p>
 
-<p align="center"><sub>Rendered daily by <a href="https://github.com/lowlighter/metrics">lowlighter/metrics</a> into <a href="./metrics">./metrics</a> — no third-party host at read time.</sub></p>
+<p align="center"><sub>Rebuilt daily from the GitHub GraphQL API. The card is committed to this repo, so no third-party host can break it.</sub></p>
 
 <p align="center"><sub>⚡ Built with caffeine in Riga · last polished 2026</sub></p>

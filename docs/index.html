@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rolands Usāns · GitHub stats</title>
+<meta name="description" content="Interactive GitHub activity dashboard: contribution calendar, trend, weekday pattern, languages and repositories." />
+<meta name="color-scheme" content="dark" />
+<style>
+  :root {
+    --page: #010409;
+    --surface: #0d1117;
+    --surface-2: #151b23;
+    --ink: #e6edf3;
+    --ink-2: #9198a1;
+    --muted: #6e7681;
+    --grid: #21262d;
+    --border: #30363d;
+    --accent: #22d3ee;
+    --accent-dim: #0e6d80;
+    --good: #0ca30c;
+    --bad: #d03b3b;
+    /* validated sequential ramp, low -> high magnitude, on surface #0d1117 */
+    --heat-0: #1b222c;
+    --heat-1: #0e6d80;
+    --heat-2: #0e9cb5;
+    --heat-3: #22d3ee;
+    --heat-4: #7ce7f7;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 15px/1.5 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 20px 64px; }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---- header ---- */
+  .profile { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+  .profile img { width: 56px; height: 56px; border-radius: 50%; background: var(--surface-2); }
+  .profile h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .profile p { margin: 2px 0 0; color: var(--ink-2); font-size: 13px; }
+
+  /* ---- sections ---- */
+  section { margin-top: 40px; }
+  section > h2 {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .section-note { margin: 0 0 16px; color: var(--muted); font-size: 12px; }
+
+  /* ---- filter row: one left-aligned row above the content it scopes ---- */
+  .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 20px; }
+  .filters .spacer { flex: 1 1 24px; }
+
+  .segmented { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .segmented button {
+    appearance: none;
+    border: 0;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 13px;
+    padding: 7px 13px;
+    cursor: pointer;
+  }
+  .segmented button:last-child { border-right: 0; }
+  .segmented button:hover { background: var(--surface-2); color: var(--ink); }
+  .segmented button[aria-pressed="true"] { background: var(--surface-2); color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px 0 var(--accent); }
+  .segmented button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+  input[type="search"] {
+    appearance: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    padding: 7px 11px;
+    min-width: 200px;
+  }
+  input[type="search"]:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+  .chip {
+    display: none;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--ink);
+    font-size: 13px;
+    padding: 6px 8px 6px 12px;
+  }
+  .chip[data-on] { display: inline-flex; }
+  .chip button {
+    appearance: none; border: 0; background: transparent; color: var(--ink-2);
+    cursor: pointer; font: inherit; line-height: 1; padding: 2px 4px; border-radius: 4px;
+  }
+  .chip button:hover { color: var(--ink); background: var(--grid); }
+
+  /* ---- hero + tiles ---- */
+  .hero { margin: 0 0 24px; }
+  .hero .value { font-size: 52px; font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
+  .hero .label { color: var(--ink-2); font-size: 13px; margin-top: 2px; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .tile { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 14px 16px; }
+  .tile .label { color: var(--ink-2); font-size: 12px; }
+  .tile .value { font-size: 26px; font-weight: 600; margin-top: 2px; letter-spacing: -0.01em; }
+  .tile .delta { font-size: 12px; margin-top: 2px; color: var(--muted); }
+  .tile .delta b { font-weight: 600; }
+  .delta.up b { color: var(--good); }
+  .delta.down b { color: var(--bad); }
+
+  /* ---- chart cards ---- */
+  figure { margin: 24px 0 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 18px; }
+  figcaption { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin-bottom: 16px; }
+  figcaption .title { font-size: 14px; font-weight: 600; }
+  figcaption .sub { color: var(--muted); font-size: 12px; }
+  .plot { overflow-x: auto; overflow-y: hidden; }
+  svg { display: block; }
+  svg text { fill: var(--muted); font-family: var(--sans); font-size: 11px; }
+  svg text.value { fill: var(--ink); font-size: 11px; font-weight: 600; }
+  .axis-line { stroke: var(--border); stroke-width: 1; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+
+  .ramp-legend { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; margin-top: 14px; }
+  .ramp-legend i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+
+  /* ---- language bars ---- */
+  .langs { display: grid; gap: 2px; }
+  .lang {
+    display: grid;
+    grid-template-columns: 150px 1fr 76px;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    padding: 5px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .lang:hover { background: var(--surface-2); }
+  .lang[aria-pressed="true"] { background: var(--surface-2); }
+  .lang:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .lang .name { display: flex; align-items: center; gap: 8px; font-size: 13px; overflow: hidden; }
+  .lang .dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 0 2px var(--surface); }
+  .lang .name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lang .track { height: 14px; background: var(--grid); border-radius: 2px; }
+  .lang .fill { height: 14px; background: var(--accent); border-radius: 2px 4px 4px 2px; }
+  .lang .amount { text-align: right; font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+  /* ---- table ---- */
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  caption { text-align: left; color: var(--muted); font-size: 12px; padding-bottom: 10px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  th { color: var(--ink-2); font-weight: 600; font-size: 12px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: var(--surface-2); }
+  th button {
+    appearance: none; border: 0; background: transparent; color: inherit; font: inherit;
+    font-weight: 600; cursor: pointer; padding: 0; display: inline-flex; gap: 5px; align-items: center;
+  }
+  th button:hover { color: var(--ink); }
+  th button .arrow { color: var(--accent); font-size: 10px; }
+  .badge {
+    display: inline-block; border: 1px solid var(--border); border-radius: 999px;
+    padding: 1px 7px; font-size: 11px; color: var(--ink-2); margin-left: 6px;
+  }
+  .repo-desc { color: var(--muted); font-size: 12px; white-space: normal; max-width: 420px; }
+  .empty { color: var(--muted); padding: 24px 12px; font-size: 13px; }
+
+  details { margin-top: 14px; }
+  summary { color: var(--ink-2); font-size: 12px; cursor: pointer; }
+  summary:hover { color: var(--ink); }
+  details table { margin-top: 10px; }
+
+  /* ---- tooltip ---- */
+  #tip {
+    position: fixed;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 90ms linear;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: var(--ink-2);
+    box-shadow: 0 8px 24px rgb(1 4 9 / 60%);
+    max-width: 260px;
+  }
+  #tip[data-on] { opacity: 1; }
+  #tip .tip-value { display: block; color: var(--ink); font-size: 14px; font-weight: 600; }
+
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--grid); color: var(--muted); font-size: 12px; }
+  footer p { margin: 4px 0; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  @media (max-width: 620px) {
+    .hero .value { font-size: 40px; }
+    .lang { grid-template-columns: 108px 1fr 68px; }
+  }
+</style>
+</head>
+<body data-palette="#22d3ee">
+<div class="wrap">
+
+  <header class="profile">
+    <img id="avatar" alt="" width="56" height="56" />
+    <div>
+      <h1 id="name">GitHub stats</h1>
+      <p id="whoami"></p>
+    </div>
+  </header>
+
+  <section id="activity" aria-labelledby="activity-h">
+    <h2 id="activity-h">Activity</h2>
+    <p class="section-note">Everything in this section follows the range below.</p>
+
+    <div class="filters" role="group" aria-label="Date range">
+      <div class="segmented" id="range-picker"></div>
+    </div>
+
+    <div class="hero">
+      <div class="value" id="hero-value">—</div>
+      <div class="label" id="hero-label"></div>
+    </div>
+
+    <div class="tiles" id="tiles"></div>
+
+    <figure>
+      <figcaption>
+        <span class="title">Contribution calendar</span>
+        <span class="sub" id="cal-sub"></span>
+      </figcaption>
+      <div class="plot"><svg id="cal" role="img" aria-labelledby="cal-desc"><title id="cal-desc"></title></svg></div>
+      <div class="ramp-legend" id="cal-legend"></div>
+      <details>
+        <summary>Show the busiest days as a table</summary>
+        <div class="table-scroll"><table id="cal-table"></table></div>
+      </details>
+    </figure>
+
+    <figure>
+      <figcaption>
+        <span class="title">Contributions over time</span>
+        <span class="sub" id="trend-sub"></span>
+      </figcaption>
+      <div class="plot"><svg id="trend" role="img" aria-labelledby="trend-desc"><title id="trend-desc"></title></svg></div>
+      <details>
+        <summary>Show as a table</summary>
+        <div class="table-scroll"><table id="trend-table"></table></div>
+      </details>
+    </figure>
+
+    <figure>
+      <figcaption>
+        <span class="title">Contributions by weekday</span>
+        <span class="sub" id="weekday-sub"></span>
+      </figcaption>
+      <div class="plot"><svg id="weekday" role="img" aria-labelledby="weekday-desc"><title id="weekday-desc"></title></svg></div>
+      <details>
+        <summary>Show as a table</summary>
+        <div class="table-scroll"><table id="weekday-table"></table></div>
+      </details>
+    </figure>
+  </section>
+
+  <section id="code" aria-labelledby="code-h">
+    <h2 id="code-h">Code</h2>
+    <p class="section-note">Owned, non-fork repositories. Not affected by the range above — this is inventory, not activity.</p>
+
+    <div class="filters" role="group" aria-label="Repository filters">
+      <div class="segmented" id="measure-picker"></div>
+      <span class="chip" id="lang-chip">
+        <span id="lang-chip-label"></span>
+        <button type="button" id="lang-chip-clear" aria-label="Clear language filter">✕</button>
+      </span>
+      <span class="spacer"></span>
+      <input type="search" id="repo-search" placeholder="Filter repositories…" aria-label="Filter repositories by name or description" />
+    </div>
+
+    <figure>
+      <figcaption>
+        <span class="title">Languages</span>
+        <span class="sub" id="lang-sub"></span>
+      </figcaption>
+      <div class="langs" id="langs"></div>
+    </figure>
+
+    <figure>
+      <figcaption>
+        <span class="title">Repositories</span>
+        <span class="sub" id="repo-sub"></span>
+      </figcaption>
+      <div class="table-scroll"><table id="repo-table"></table></div>
+      <div class="empty" id="repo-empty" hidden>No repository matches these filters.</div>
+    </figure>
+  </section>
+
+  <footer>
+    <p id="generated"></p>
+    <p>Built from the GitHub GraphQL API by <a href="https://github.com/rolandsusans/rolandsusans">rolandsusans/rolandsusans</a>. Counts cover what the build token can see.</p>
+  </footer>
+</div>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script type="module">
+const DAY = 86400e3;
+const $ = (id) => document.getElementById(id);
+
+const RANGES = [
+  { id: "30", label: "30 days", days: 30, window: 30 },
+  { id: "90", label: "90 days", days: 90, window: 90 },
+  { id: "365", label: "1 year", days: 365, window: 365 },
+  { id: "all", label: "All time", days: null, window: null },
+];
+const MEASURES = [
+  { id: "bytes", label: "By code size" },
+  { id: "repos", label: "By repository count" },
+];
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const state = { range: "365", measure: "bytes", language: null, search: "", sort: { key: "pushedAt", dir: -1 } };
+let data;
+
+/* ---------- formatting ---------- */
+const nf = new Intl.NumberFormat("en-US");
+const fmt = (n) => nf.format(n);
+const compact = (n) => (n >= 10000 ? new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(n) : nf.format(n));
+const dateLong = (d) => d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+const bytes = (n) => {
+  const units = ["B", "kB", "MB", "GB"];
+  let i = 0;
+  let v = n;
+  while (v >= 1024 && i < units.length - 1) { v /= 1024; i++; }
+  return `${v >= 100 || i === 0 ? Math.round(v) : v.toFixed(1)} ${units[i]}`;
+};
+const ago = (iso) => {
+  const days = Math.floor((Date.now() - new Date(iso)) / DAY);
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 30) return `${days} days ago`;
+  const months = Math.round(days / 30);
+  if (months < 18) return `${months} month${months === 1 ? "" : "s"} ago`;
+  return `${Math.round(days / 365)} years ago`;
+};
+
+/* ---------- svg helpers ---------- */
+const SVG = "http://www.w3.org/2000/svg";
+function el(name, attrs = {}) {
+  const node = document.createElementNS(SVG, name);
+  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+  return node;
+}
+function text(node, value) { node.textContent = value; return node; }
+function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+
+/** Reset a chart svg and give it back the <title> that carries its accessible name. */
+function resetPlot(svg) {
+  clear(svg);
+  const title = el("title", { id: `${svg.id}-desc` });
+  svg.append(title);
+  svg.setAttribute("aria-labelledby", title.id);
+  return title;
+}
+
+/* ---------- tooltip ---------- */
+const tip = $("tip");
+function showTip(evt, value, label) {
+  clear(tip);
+  const strong = document.createElement("span");
+  strong.className = "tip-value";
+  strong.textContent = value;
+  tip.append(strong, document.createTextNode(label));
+  tip.setAttribute("data-on", "");
+  const box = tip.getBoundingClientRect();
+  const x = Math.min(Math.max(evt.clientX + 14, 8), window.innerWidth - box.width - 8);
+  const y = Math.max(evt.clientY - box.height - 12, 8);
+  tip.style.left = `${x}px`;
+  tip.style.top = `${y}px`;
+}
+function hideTip() { tip.removeAttribute("data-on"); }
+document.addEventListener("scroll", hideTip, { passive: true });
+
+/* ---------- date series ---------- */
+function calendarStart() { return new Date(`${data.calendar.start}T00:00:00Z`); }
+function dayAt(i) { return new Date(calendarStart().getTime() + i * DAY); }
+
+function slice() {
+  const counts = data.calendar.counts;
+  const range = RANGES.find((r) => r.id === state.range);
+  const from = range.days === null ? 0 : Math.max(0, counts.length - range.days);
+  return { from, counts: counts.slice(from), range };
+}
+
+/* ---------- header ---------- */
+function renderHeader() {
+  const u = data.user;
+  $("avatar").src = u.avatarUrl;
+  $("avatar").alt = `${u.name ?? u.login} avatar`;
+  $("name").textContent = u.name ?? u.login;
+  const bits = [`@${u.login}`];
+  if (u.location) bits.push(u.location);
+  bits.push(`joined ${new Date(u.createdAt).getUTCFullYear()}`);
+  bits.push(`${fmt(u.followers)} followers`);
+  const p = $("whoami");
+  clear(p);
+  p.append(document.createTextNode(`${bits.join(" · ")} · `));
+  const a = document.createElement("a");
+  a.href = u.url;
+  a.textContent = "open on GitHub";
+  p.append(a);
+  $("generated").textContent = `Rebuilt ${ago(data.generatedAt)} · ${fmt(data.calendar.counts.length)} days of history · ${fmt(data.user.ownedRepos)} owned repositories · ${fmt(data.user.contributedTo)} repositories contributed to`;
+}
+
+/* ---------- segmented controls ---------- */
+function renderSegmented(host, items, active, onPick) {
+  clear(host);
+  for (const item of items) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = item.label;
+    b.setAttribute("aria-pressed", String(item.id === active));
+    b.addEventListener("click", () => onPick(item.id));
+    host.append(b);
+  }
+}
+
+/* ---------- hero + tiles ---------- */
+function windowTotals() {
+  const range = RANGES.find((r) => r.id === state.range);
+  if (range.window === null) {
+    const sum = (key) => data.years.reduce((acc, y) => acc + y[key], 0);
+    return {
+      current: { commits: sum("commits"), pullRequests: sum("pullRequests"), reviews: sum("reviews"), issues: sum("issues") },
+      previous: null,
+    };
+  }
+  const w = data.windows.find((x) => x.days === range.window);
+  return { current: w.current, previous: w.previous };
+}
+
+function renderHero() {
+  const { counts, range } = slice();
+  const total = counts.reduce((a, b) => a + b, 0);
+  $("hero-value").textContent = fmt(total);
+  $("hero-label").textContent =
+    range.days === null
+      ? `contributions since ${new Date(data.user.createdAt).getUTCFullYear()} · current streak ${data.streaks.current} days, best ${data.streaks.best}`
+      : `contributions in the last ${range.days} days · current streak ${data.streaks.current} days, best ${data.streaks.best}`;
+}
+
+function renderTiles() {
+  const { current, previous } = windowTotals();
+  const rows = [
+    ["Commits", current.commits],
+    ["Pull requests", current.pullRequests],
+    ["Reviews", current.reviews],
+    ["Issues", current.issues],
+  ];
+  const host = $("tiles");
+  clear(host);
+  for (const [label, value] of rows) {
+    const key = { Commits: "commits", "Pull requests": "pullRequests", Reviews: "reviews", Issues: "issues" }[label];
+    const tile = document.createElement("div");
+    tile.className = "tile";
+    const l = document.createElement("div");
+    l.className = "label";
+    l.textContent = label;
+    const v = document.createElement("div");
+    v.className = "value";
+    v.textContent = compact(value);
+    tile.append(l, v);
+    if (previous) {
+      const before = previous[key];
+      const diff = value - before;
+      const d = document.createElement("div");
+      d.className = `delta ${diff > 0 ? "up" : diff < 0 ? "down" : ""}`;
+      const b = document.createElement("b");
+      b.textContent = `${diff > 0 ? "+" : diff < 0 ? "−" : "±"}${fmt(Math.abs(diff))}`;
+      d.append(b, document.createTextNode(" vs previous period"));
+      tile.append(d);
+    }
+    host.append(tile);
+  }
+}
+
+/* ---------- contribution calendar (heatmap) ---------- */
+const HEAT = ["--heat-0", "--heat-1", "--heat-2", "--heat-3", "--heat-4"];
+function buckets(counts) {
+  const active = counts.filter((n) => n > 0).sort((a, b) => a - b);
+  if (!active.length) return [1, 2, 3, 4];
+  const q = (p) => active[Math.min(active.length - 1, Math.floor(active.length * p))];
+  const raw = [1, q(0.25), q(0.5), q(0.75)];
+  // keep thresholds strictly increasing so every level is reachable
+  return raw.map((v, i) => Math.max(v, i === 0 ? 1 : raw[i - 1] + 1));
+}
+const levelOf = (n, th) => (n <= 0 ? 0 : n < th[1] ? 1 : n < th[2] ? 2 : n < th[3] ? 3 : 4);
+
+function renderCalendar() {
+  const { from, counts, range } = slice();
+  const svg = $("cal");
+  const title = resetPlot(svg);
+  const th = buckets(counts);
+  const cell = range.days === null ? 8 : range.days <= 30 ? 26 : range.days <= 90 ? 17 : 11;
+  const gap = 2;
+  const step = cell + gap;
+
+  if (range.days === null) {
+    // one row per calendar year
+    const byYear = new Map();
+    counts.forEach((n, i) => {
+      const d = dayAt(from + i);
+      const y = d.getUTCFullYear();
+      if (!byYear.has(y)) byYear.set(y, []);
+      byYear.get(y).push({ n, d });
+    });
+    const labelW = 42;
+    const rowH = 7 * step + 14;
+    const years = [...byYear.keys()].sort();
+    svg.setAttribute("width", labelW + 54 * step);
+    svg.setAttribute("height", years.length * rowH);
+    years.forEach((year, r) => {
+      const top = r * rowH;
+      svg.append(text(el("text", { x: 0, y: top + 4 * step - 2 }), String(year)));
+      for (const { n, d } of byYear.get(year)) {
+        const week = Math.floor((dayOfYear(d) + firstWeekdayOfYear(year) - 1) / 7);
+        svg.append(cellRect(labelW + week * step, top + d.getUTCDay() * step, cell, n, th, d));
+      }
+    });
+    text(title, `Contribution calendar, ${years[0]} to ${years[years.length - 1]}. ${fmt(counts.reduce((a, b) => a + b, 0))} contributions.`);
+  } else {
+    const firstCol = dayAt(from).getUTCDay();
+    const cols = Math.ceil((counts.length + firstCol) / 7);
+    const labelW = cell >= 17 ? 34 : 28;
+    svg.setAttribute("width", labelW + cols * step);
+    svg.setAttribute("height", 7 * step + 18);
+    for (const row of [1, 3, 5]) {
+      svg.append(text(el("text", { x: 0, y: 18 + row * step + cell * 0.5 }), WEEKDAYS[row].slice(0, 3)));
+    }
+    let lastMonth = -1;
+    counts.forEach((n, i) => {
+      const d = dayAt(from + i);
+      const col = Math.floor((i + firstCol) / 7);
+      const month = d.getUTCMonth();
+      if (month !== lastMonth && d.getUTCDate() <= 7) {
+        svg.append(text(el("text", { x: labelW + col * step, y: 10 }), MONTHS[month]));
+        lastMonth = month;
+      }
+      svg.append(cellRect(labelW + col * step, 18 + d.getUTCDay() * step, cell, n, th, d));
+    });
+    text(title, `Contribution calendar for the last ${range.days} days. ${fmt(counts.reduce((a, b) => a + b, 0))} contributions.`);
+  }
+
+  renderRampLegend(th);
+  renderTopDays(from, counts);
+}
+
+const dayOfYear = (d) => Math.floor((d - new Date(Date.UTC(d.getUTCFullYear(), 0, 1))) / DAY) + 1;
+const firstWeekdayOfYear = (y) => new Date(Date.UTC(y, 0, 1)).getUTCDay();
+
+/** Cells carry their readout in data-* and the svg delegates hover — thousands of cells, one listener. */
+function cellRect(x, y, cell, n, th, date) {
+  return el("rect", {
+    x, y, width: cell, height: cell, rx: 2, ry: 2,
+    fill: `var(${HEAT[levelOf(n, th)]})`,
+    "data-n": n,
+    "data-d": dateLong(date),
+  });
+}
+
+function delegateCellHover(svg) {
+  let active = null;
+  const leave = () => {
+    if (active) active.removeAttribute("stroke");
+    active = null;
+    hideTip();
+  };
+  svg.addEventListener("pointermove", (e) => {
+    const cell = e.target.closest("rect[data-n]");
+    if (!cell) return leave();
+    if (cell !== active) {
+      if (active) active.removeAttribute("stroke");
+      active = cell;
+      cell.setAttribute("stroke", "var(--ink-2)");
+      cell.setAttribute("stroke-width", "1");
+    }
+    const n = Number(cell.dataset.n);
+    showTip(e, n === 1 ? "1 contribution" : `${fmt(n)} contributions`, cell.dataset.d);
+  });
+  svg.addEventListener("pointerleave", leave);
+}
+
+function renderRampLegend(th) {
+  const host = $("cal-legend");
+  clear(host);
+  host.append(document.createTextNode("Less"));
+  HEAT.forEach((token, i) => {
+    const swatch = document.createElement("i");
+    swatch.style.background = `var(${token})`;
+    swatch.title = i === 0 ? "no contributions" : i === 4 ? `${fmt(th[3])} or more` : `${fmt(i === 1 ? 1 : th[i - 1])}–${fmt(th[i] - 1)}`;
+    host.append(swatch);
+  });
+  host.append(document.createTextNode("More"));
+  const note = document.createElement("span");
+  note.style.marginLeft = "8px";
+  note.textContent = `levels at 1, ${fmt(th[1])}, ${fmt(th[2])}, ${fmt(th[3])}+`;
+  host.append(note);
+  $("cal-sub").textContent = RANGES.find((r) => r.id === state.range).days === null ? "one row per year" : "one column per week";
+}
+
+function renderTopDays(from, counts) {
+  const rows = counts
+    .map((n, i) => ({ n, d: dayAt(from + i) }))
+    .filter((x) => x.n > 0)
+    .sort((a, b) => b.n - a.n)
+    .slice(0, 15);
+  buildTable($("cal-table"), "Busiest days in the selected range", ["Date", "Contributions"], rows.map((r) => [dateLong(r.d), fmt(r.n)]), [false, true]);
+}
+
+/* ---------- trend ---------- */
+function trendSeries() {
+  const { from, counts, range } = slice();
+  const points = [];
+  if (range.days === null) {
+    for (const y of data.years) points.push({ label: String(y.year), value: y.contributions, full: `${y.year}` });
+    return { points, unit: "year" };
+  }
+  if (range.days <= 30) {
+    counts.forEach((n, i) => {
+      const d = dayAt(from + i);
+      points.push({ label: String(d.getUTCDate()), value: n, full: dateLong(d) });
+    });
+    return { points, unit: "day" };
+  }
+  if (range.days <= 90) {
+    for (let i = 0; i < counts.length; i += 7) {
+      const d = dayAt(from + i);
+      const chunk = counts.slice(i, i + 7);
+      points.push({
+        label: `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`,
+        value: chunk.reduce((a, b) => a + b, 0),
+        full: `week of ${dateLong(d)}`,
+      });
+    }
+    return { points, unit: "week" };
+  }
+  const byMonth = new Map();
+  counts.forEach((n, i) => {
+    const d = dayAt(from + i);
+    const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    byMonth.set(key, (byMonth.get(key) ?? 0) + n);
+  });
+  const yearsSpanned = new Set([...byMonth.keys()].map((k) => k.slice(0, 4))).size;
+  for (const [key, value] of byMonth) {
+    const [y, m] = key.split("-");
+    const name = MONTHS[Number(m) - 1];
+    points.push({
+      label: yearsSpanned > 1 ? `${name} ’${y.slice(2)}` : name,
+      value,
+      full: `${name} ${y}`,
+    });
+  }
+  return { points, unit: "month" };
+}
+
+function renderTrend() {
+  const { points, unit } = trendSeries();
+  const title = columnChart($("trend"), points, unit, "contributions");
+  $("trend-sub").textContent = `one column per ${unit}`;
+  text(title, `Contributions per ${unit}. Peak ${fmt(Math.max(...points.map((p) => p.value)))}.`);
+  buildTable($("trend-table"), `Contributions per ${unit}`, [unit[0].toUpperCase() + unit.slice(1), "Contributions"], points.map((p) => [p.full, fmt(p.value)]), [false, true]);
+}
+
+/* ---------- weekday ---------- */
+function renderWeekday() {
+  const { from, counts } = slice();
+  const sums = Array(7).fill(0);
+  const days = Array(7).fill(0);
+  counts.forEach((n, i) => {
+    const w = dayAt(from + i).getUTCDay();
+    sums[w] += n;
+    days[w] += 1;
+  });
+  const points = WEEKDAYS.map((name, i) => ({
+    label: name.slice(0, 3),
+    value: days[i] ? Math.round((sums[i] / days[i]) * 10) / 10 : 0,
+    full: name,
+    extra: `${fmt(sums[i])} across ${fmt(days[i])} ${name}s`,
+  }));
+  const title = columnChart($("weekday"), points, "weekday", "per day on average", true);
+  $("weekday-sub").textContent = "average contributions per day";
+  const peak = points.reduce((a, b) => (b.value > a.value ? b : a));
+  text(title, `Average contributions by weekday. Busiest is ${peak.full} at ${peak.value} per day.`);
+  buildTable($("weekday-table"), "Average contributions by weekday", ["Weekday", "Average per day", "Total"], points.map((p, i) => [p.full, String(p.value), fmt(sums[i])]), [false, true, true]);
+}
+
+/* ---------- shared column chart (single series) ---------- */
+/** Round up to a 1/2/5 x 10^n step so ticks land on numbers people read. */
+function niceTicks(max, count = 3) {
+  const rough = max / count;
+  const mag = 10 ** Math.floor(Math.log10(rough));
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= rough) ?? 10 * mag;
+  const top = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let v = 0; v <= top + 1e-9; v += step) ticks.push(Math.round(v * 100) / 100);
+  return { top, ticks };
+}
+
+function columnChart(svg, points, unit, valueNoun, wide = false) {
+  const title = resetPlot(svg);
+  const H = 190;
+  const padTop = 24;
+  const padBottom = 26;
+  const padLeft = 40;
+  const band = wide ? 64 : Math.max(14, Math.min(48, Math.floor(720 / points.length)));
+  const barW = Math.min(24, band - 6);
+  const plotW = points.length * band;
+  const W = padLeft + plotW + 10;
+  const rawMax = Math.max(1, ...points.map((p) => p.value));
+  const { top: max, ticks } = niceTicks(rawMax);
+  const plotH = H - padTop - padBottom;
+  const y = (v) => padTop + plotH - (v / max) * plotH;
+
+  svg.setAttribute("width", W);
+  svg.setAttribute("height", H);
+
+  for (const tick of ticks) {
+    const ty = y(tick);
+    svg.append(el("line", { class: tick === 0 ? "axis-line" : "grid-line", x1: padLeft, y1: ty, x2: padLeft + plotW, y2: ty }));
+    svg.append(text(el("text", { x: padLeft - 8, y: ty + 4, "text-anchor": "end" }), fmt(tick)));
+  }
+
+  const peak = points.reduce((a, b) => (b.value > a.value ? b : a));
+  points.forEach((p, i) => {
+    const cx = padLeft + i * band + band / 2;
+    const h = Math.max(p.value > 0 ? 2 : 0, plotH - (y(p.value) - padTop));
+    if (h > 0) {
+      const r = Math.min(4, h, barW / 2);
+      const top = padTop + plotH - h;
+      svg.append(el("path", {
+        d: `M${cx - barW / 2},${padTop + plotH} L${cx - barW / 2},${top + r} Q${cx - barW / 2},${top} ${cx - barW / 2 + r},${top} L${cx + barW / 2 - r},${top} Q${cx + barW / 2},${top} ${cx + barW / 2},${top + r} L${cx + barW / 2},${padTop + plotH} Z`,
+        fill: "var(--accent)",
+      }));
+    }
+    if (p === peak && p.value > 0) {
+      const label = text(el("text", { x: cx, y: padTop + plotH - h - 7, "text-anchor": "middle", class: "value" }), String(p.value));
+      svg.append(label);
+    }
+    if (points.length <= 32 || i % Math.ceil(points.length / 16) === 0) {
+      svg.append(text(el("text", { x: cx, y: H - 8, "text-anchor": "middle" }), p.label));
+    }
+    const hit = el("rect", { x: padLeft + i * band, y: padTop, width: band, height: plotH, fill: "transparent" });
+    const readout = () => (unit === "weekday" ? `${p.value} ${valueNoun}` : `${fmt(p.value)} ${valueNoun}`);
+    hit.addEventListener("pointerenter", (e) => showTip(e, readout(), p.extra ?? p.full));
+    hit.addEventListener("pointermove", (e) => showTip(e, readout(), p.extra ?? p.full));
+    hit.addEventListener("pointerleave", hideTip);
+    svg.append(hit);
+  });
+  return title;
+}
+
+/* ---------- languages ---------- */
+function languageRows() {
+  const key = state.measure === "bytes" ? "bytes" : "repos";
+  const sorted = [...data.languages].sort((a, b) => b[key] - a[key]);
+  const top = sorted.slice(0, 8);
+  const rest = sorted.slice(8);
+  if (rest.length) {
+    top.push({ name: `Other (${rest.length})`, color: null, bytes: rest.reduce((s, l) => s + l.bytes, 0), repos: rest.reduce((s, l) => s + l.repos, 0), isOther: true });
+  }
+  const total = sorted.reduce((s, l) => s + l[key], 0) || 1;
+  return top.map((l) => ({
+    ...l,
+    share: l[key] / total,
+    // a repo counts once per language it contains, so that denominator has no share meaning
+    primary: key === "bytes" ? `${((l.bytes / total) * 100).toFixed(1)}%` : `${l.repos} repo${l.repos === 1 ? "" : "s"}`,
+    detail: key === "bytes" ? bytes(l.bytes) : `${((l.bytes / sorted.reduce((s, x) => s + x.bytes, 0)) * 100).toFixed(1)}% of code`,
+  }));
+}
+
+function renderLanguages() {
+  const rows = languageRows();
+  const host = $("langs");
+  clear(host);
+  const max = Math.max(...rows.map((r) => r.share)) || 1;
+  for (const row of rows) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "lang";
+    b.disabled = Boolean(row.isOther);
+    b.setAttribute("aria-pressed", String(state.language === row.name));
+    if (!row.isOther) b.addEventListener("click", () => setLanguage(state.language === row.name ? null : row.name));
+
+    const name = document.createElement("span");
+    name.className = "name";
+    if (row.color) {
+      const dot = document.createElement("i");
+      dot.className = "dot";
+      dot.style.background = row.color;
+      name.append(dot);
+    }
+    const label = document.createElement("span");
+    label.textContent = row.name;
+    name.append(label);
+
+    const track = document.createElement("span");
+    track.className = "track";
+    const fill = document.createElement("span");
+    fill.className = "fill";
+    fill.style.display = "block";
+    fill.style.width = `${Math.max(2, (row.share / max) * 100)}%`;
+    track.append(fill);
+
+    const amount = document.createElement("span");
+    amount.className = "amount";
+    amount.textContent = row.primary;
+
+    b.append(name, track, amount);
+    b.title = `${row.name} · ${row.detail}`;
+    host.append(b);
+  }
+  $("lang-sub").textContent = state.measure === "bytes"
+    ? "share of code by size, as GitHub measures it"
+    : "how many repositories contain each language";
+}
+
+function setLanguage(name) {
+  state.language = name;
+  const chip = $("lang-chip");
+  if (name) {
+    chip.setAttribute("data-on", "");
+    $("lang-chip-label").textContent = `Language: ${name}`;
+  } else {
+    chip.removeAttribute("data-on");
+  }
+  renderLanguages();
+  renderRepos();
+}
+
+/* ---------- repositories ---------- */
+const REPO_COLUMNS = [
+  { key: "name", label: "Repository", num: false },
+  { key: "language", label: "Language", num: false },
+  { key: "stars", label: "Stars", num: true },
+  { key: "forks", label: "Forks", num: true },
+  { key: "pushedAt", label: "Last push", num: true },
+];
+
+function visibleRepos() {
+  const q = state.search.trim().toLowerCase();
+  return data.repos
+    .filter((r) => !state.language || r.language === state.language)
+    .filter((r) => !q || r.name.toLowerCase().includes(q) || (r.description ?? "").toLowerCase().includes(q))
+    .sort((a, b) => {
+      const { key, dir } = state.sort;
+      const av = a[key] ?? "";
+      const bv = b[key] ?? "";
+      if (typeof av === "number" && typeof bv === "number") return (av - bv) * dir;
+      return String(av).localeCompare(String(bv)) * dir;
+    });
+}
+
+function renderRepos() {
+  const rows = visibleRepos();
+  const table = $("repo-table");
+  clear(table);
+  $("repo-empty").hidden = rows.length > 0;
+  table.hidden = rows.length === 0;
+  $("repo-sub").textContent = `${fmt(rows.length)} of ${fmt(data.repos.length)} shown · ${fmt(data.totals.stars)} stars total`;
+  if (!rows.length) return;
+
+  const thead = document.createElement("thead");
+  const hr = document.createElement("tr");
+  for (const col of REPO_COLUMNS) {
+    const th = document.createElement("th");
+    if (col.num) th.className = "num";
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = col.label;
+    if (state.sort.key === col.key) {
+      const arrow = document.createElement("span");
+      arrow.className = "arrow";
+      arrow.textContent = state.sort.dir === 1 ? "▲" : "▼";
+      b.append(arrow);
+    }
+    b.addEventListener("click", () => {
+      const dir = state.sort.key === col.key ? -state.sort.dir : col.num ? -1 : 1;
+      state.sort = { key: col.key, dir };
+      renderRepos();
+    });
+    th.append(b);
+    hr.append(th);
+  }
+  thead.append(hr);
+
+  const tbody = document.createElement("tbody");
+  for (const r of rows) {
+    const tr = document.createElement("tr");
+
+    const nameCell = document.createElement("td");
+    const link = document.createElement("a");
+    link.href = r.url;
+    link.textContent = r.name;
+    nameCell.append(link);
+    if (r.private) nameCell.append(badge("Private"));
+    if (r.archived) nameCell.append(badge("Archived"));
+    if (r.description) {
+      const desc = document.createElement("div");
+      desc.className = "repo-desc";
+      desc.textContent = r.description;
+      nameCell.append(desc);
+    }
+
+    const langCell = document.createElement("td");
+    if (r.language) {
+      if (r.languageColor) {
+        const dot = document.createElement("i");
+        dot.className = "dot";
+        dot.style.cssText = `display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;background:${r.languageColor}`;
+        langCell.append(dot);
+      }
+      langCell.append(document.createTextNode(r.language));
+    } else {
+      langCell.append(document.createTextNode("—"));
+    }
+
+    tr.append(nameCell, langCell, numCell(fmt(r.stars)), numCell(fmt(r.forks)), numCell(ago(r.pushedAt)));
+    tbody.append(tr);
+  }
+
+  const caption = document.createElement("caption");
+  caption.textContent = "Owned, non-fork repositories. Click a column to sort.";
+  table.append(caption, thead, tbody);
+}
+
+function badge(label) {
+  const s = document.createElement("span");
+  s.className = "badge";
+  s.textContent = label;
+  return s;
+}
+function numCell(value) {
+  const td = document.createElement("td");
+  td.className = "num";
+  td.textContent = value;
+  return td;
+}
+
+/* ---------- accessible table views ---------- */
+function buildTable(table, caption, headers, rows, numeric) {
+  clear(table);
+  const cap = document.createElement("caption");
+  cap.textContent = caption;
+  const thead = document.createElement("thead");
+  const hr = document.createElement("tr");
+  headers.forEach((h, i) => {
+    const th = document.createElement("th");
+    if (numeric[i]) th.className = "num";
+    th.textContent = h;
+    hr.append(th);
+  });
+  thead.append(hr);
+  const tbody = document.createElement("tbody");
+  for (const row of rows) {
+    const tr = document.createElement("tr");
+    row.forEach((cellValue, i) => {
+      const td = document.createElement("td");
+      if (numeric[i]) td.className = "num";
+      td.textContent = cellValue;
+      tr.append(td);
+    });
+    tbody.append(tr);
+  }
+  table.append(cap, thead, tbody);
+}
+
+/* ---------- wiring ---------- */
+function renderActivity() {
+  renderHero();
+  renderTiles();
+  renderCalendar();
+  renderTrend();
+  renderWeekday();
+}
+
+function pickRange(id) {
+  state.range = id;
+  renderSegmented($("range-picker"), RANGES, state.range, pickRange);
+  renderActivity();
+}
+
+function pickMeasure(id) {
+  state.measure = id;
+  renderSegmented($("measure-picker"), MEASURES, state.measure, pickMeasure);
+  renderLanguages();
+}
+
+function boot() {
+  renderHeader();
+  renderSegmented($("range-picker"), RANGES, state.range, pickRange);
+  renderSegmented($("measure-picker"), MEASURES, state.measure, pickMeasure);
+  delegateCellHover($("cal"));
+  $("lang-chip-clear").addEventListener("click", () => setLanguage(null));
+  $("repo-search").addEventListener("input", (e) => {
+    state.search = e.target.value;
+    renderRepos();
+  });
+  renderActivity();
+  renderLanguages();
+  renderRepos();
+}
+
+const res = await fetch("./stats.json", { cache: "no-cache" });
+if (!res.ok) {
+  document.querySelector(".wrap").insertAdjacentHTML("beforeend", "<p class='empty'>Could not load stats.json.</p>");
+} else {
+  data = await res.json();
+  boot();
+}
+</script>
+</body>
+</html>
