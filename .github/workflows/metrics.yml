@@ -18,8 +18,8 @@ jobs:
         svg { background: #0d1117; color: #c9d1d9; }
         h1, h2, h3 { color: #22d3ee; }
         footer { color: #6e7681; }
-        path[fill="#ebedf0"] { fill: #161b22; }
-        svg[version="1.1"] { margin-top: 0 !important; }
+        [fill="#ebedf0"] { fill: #161b22; }
+        svg[version="1.1"]:not(.calendar) { display: none !important; }
     steps:
       - name: Overview
         uses: lowlighter/metrics@latest
@@ -62,7 +62,9 @@ jobs:
           output_condition: data-changed
           committer_message: "chore(metrics): refresh calendar"
           base: ""
+          config_display: large
           config_timezone: Europe/Riga
           extras_css: ${{ env.DARK_CSS }}
+          plugin_calendar: yes
           plugin_isocalendar: yes
           plugin_isocalendar_duration: full-year
