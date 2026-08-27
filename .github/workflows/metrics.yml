@@ -18,10 +18,8 @@ jobs:
         svg { background: #0d1117; color: #c9d1d9; }
         h1, h2, h3 { color: #22d3ee; }
         footer { color: #6e7681; }
-        :root {
-          --color-calendar-graph-day-bg: #161b22;
-          --color-calendar-graph-day-border: #30363d;
-        }
+        path[fill="#ebedf0"] { fill: #161b22; }
+        svg[version="1.1"] { margin-top: 0 !important; }
     steps:
       - name: Overview
         uses: lowlighter/metrics@latest
@@ -36,9 +34,6 @@ jobs:
           base: header, activity, repositories
           config_timezone: Europe/Riga
           extras_css: ${{ env.DARK_CSS }}
-          plugin_achievements: yes
-          plugin_achievements_display: compact
-          plugin_achievements_threshold: B
 
       - name: Languages
         uses: lowlighter/metrics@latest
@@ -55,7 +50,6 @@ jobs:
           extras_css: ${{ env.DARK_CSS }}
           plugin_languages: yes
           plugin_languages_details: percentage
-          plugin_languages_limit: 10
 
       - name: Calendar
         uses: lowlighter/metrics@latest
