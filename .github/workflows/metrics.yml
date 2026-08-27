@@ -34,6 +34,8 @@ jobs:
           base: header, activity, repositories
           config_timezone: Europe/Riga
           extras_css: ${{ env.DARK_CSS }}
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: full-year
 
       - name: Languages
         uses: lowlighter/metrics@latest
@@ -66,5 +68,3 @@ jobs:
           config_timezone: Europe/Riga
           extras_css: ${{ env.DARK_CSS }}
           plugin_calendar: yes
-          plugin_isocalendar: yes
-          plugin_isocalendar_duration: full-year
