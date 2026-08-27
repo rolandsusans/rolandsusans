@@ -20,6 +20,7 @@ jobs:
         footer { color: #6e7681; }
         [fill="#ebedf0"] { fill: #161b22; }
         svg[version="1.1"]:not(.calendar) { display: none !important; }
+        section:has(svg.calendar) > h2 { display: none !important; }
     steps:
       - name: Overview
         uses: lowlighter/metrics@latest
@@ -34,8 +35,6 @@ jobs:
           base: header, activity, repositories
           config_timezone: Europe/Riga
           extras_css: ${{ env.DARK_CSS }}
-          plugin_isocalendar: yes
-          plugin_isocalendar_duration: full-year
 
       - name: Languages
         uses: lowlighter/metrics@latest
@@ -66,5 +65,8 @@ jobs:
           base: ""
           config_display: large
           config_timezone: Europe/Riga
+          optimize: xml
           extras_css: ${{ env.DARK_CSS }}
           plugin_calendar: yes
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: full-year
