@@ -386,6 +386,13 @@ function el(name, attrs = {}) {
 function text(node, value) { node.textContent = value; return node; }
 function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
 
+/** Usable pixel width of the .plot box an svg lives in. */
+function plotWidth(svg, fallback = 900) {
+  const box = svg.closest(".plot");
+  const w = box ? Math.floor(box.clientWidth) : 0;
+  return w > 60 ? w : fallback;
+}
+
 /** Reset a chart svg and give it back the <title> that carries its accessible name. */
 function resetPlot(svg) {
   clear(svg);
@@ -533,9 +540,23 @@ function renderCalendar() {
   const svg = $("cal");
   const title = resetPlot(svg);
   const th = buckets(counts);
-  const cell = range.days === null ? 8 : range.days <= 30 ? 26 : range.days <= 90 ? 17 : 11;
+  const avail = plotWidth(svg);
   const gap = 2;
+  // Short ranges are only a few week-columns wide, so a 7-row grid would hug the left of
+  // the card. Under a quarter, lay the days out as a single strip instead.
+  const strip = range.days !== null && range.days <= 90;
+  const columns = range.days === null ? 54 : strip ? range.days : Math.ceil((range.days + 6) / 7);
+  const labelW = range.days === null ? 42 : strip ? 0 : 30;
+  const cap = range.days === null ? 14 : strip ? 36 : 18;
+  const cell = Math.max(6, Math.min(cap, Math.floor((avail - labelW - 8) / columns) - gap));
   const step = cell + gap;
+
+  if (strip) {
+    renderDayStrip({ svg, title, from, counts, th, cell, step, avail, range });
+    renderRampLegend(th);
+    renderTopDays(from, counts);
+    return;
+  }
 
   if (range.days === null) {
     // one row per calendar year
@@ -546,10 +567,9 @@ function renderCalendar() {
       if (!byYear.has(y)) byYear.set(y, []);
       byYear.get(y).push({ n, d });
     });
-    const labelW = 42;
     const rowH = 7 * step + 14;
     const years = [...byYear.keys()].sort();
-    svg.setAttribute("width", labelW + 54 * step);
+    svg.setAttribute("width", Math.max(avail, labelW + 54 * step));
     svg.setAttribute("height", years.length * rowH);
     years.forEach((year, r) => {
       const top = r * rowH;
@@ -563,8 +583,7 @@ function renderCalendar() {
   } else {
     const firstCol = dayAt(from).getUTCDay();
     const cols = Math.ceil((counts.length + firstCol) / 7);
-    const labelW = cell >= 17 ? 34 : 28;
-    svg.setAttribute("width", labelW + cols * step);
+    svg.setAttribute("width", Math.max(avail, labelW + cols * step));
     svg.setAttribute("height", 7 * step + 18);
     for (const row of [1, 3, 5]) {
       svg.append(text(el("text", { x: 0, y: 18 + row * step + cell * 0.5 }), WEEKDAYS[row].slice(0, 3)));
@@ -585,6 +604,29 @@ function renderCalendar() {
 
   renderRampLegend(th);
   renderTopDays(from, counts);
+}
+
+/** One square per day in a single row, with a date tick every few days. */
+function renderDayStrip({ svg, title, from, counts, th, cell, step, avail, range }) {
+  const top = 22;
+  svg.setAttribute("width", Math.max(avail, counts.length * step));
+  svg.setAttribute("height", top + cell + 24);
+  const every = Math.ceil(counts.length / 12);
+  counts.forEach((n, i) => {
+    const d = dayAt(from + i);
+    const x = i * step;
+    svg.append(cellRect(x, top, cell, n, th, d));
+    if (i % every === 0) {
+      // the first and last ticks would hang off the card if they stayed centred
+      const last = i + every >= counts.length;
+      const anchor = i === 0 ? "start" : last ? "end" : "middle";
+      const tx = i === 0 ? x : last ? x + cell : x + cell / 2;
+      svg.append(
+        text(el("text", { x: tx, y: top + cell + 16, "text-anchor": anchor }), `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`)
+      );
+    }
+  });
+  text(title, `Contribution calendar for the last ${range.days} days, one square per day. ${fmt(counts.reduce((a, b) => a + b, 0))} contributions.`);
 }
 
 const dayOfYear = (d) => Math.floor((d - new Date(Date.UTC(d.getUTCFullYear(), 0, 1))) / DAY) + 1;
@@ -637,7 +679,8 @@ function renderRampLegend(th) {
   note.style.marginLeft = "8px";
   note.textContent = `levels at 1, ${fmt(th[1])}, ${fmt(th[2])}, ${fmt(th[3])}+`;
   host.append(note);
-  $("cal-sub").textContent = RANGES.find((r) => r.id === state.range).days === null ? "one row per year" : "one column per week";
+  const r = RANGES.find((x) => x.id === state.range);
+  $("cal-sub").textContent = r.days === null ? "one row per year" : r.days <= 90 ? "one square per day" : "one column per week";
 }
 
 function renderTopDays(from, counts) {
@@ -744,10 +787,10 @@ function columnChart(svg, points, unit, valueNoun, wide = false) {
   const padTop = 24;
   const padBottom = 26;
   const padLeft = 40;
-  const band = wide ? 64 : Math.max(14, Math.min(48, Math.floor(720 / points.length)));
-  const barW = Math.min(24, band - 6);
-  const plotW = points.length * band;
-  const W = padLeft + plotW + 10;
+  const W = plotWidth(svg);
+  const plotW = W - padLeft - 10;
+  const band = plotW / points.length;
+  const barW = Math.max(3, Math.min(24, band - 6));
   const rawMax = Math.max(1, ...points.map((p) => p.value));
   const { top: max, ticks } = niceTicks(rawMax);
   const plotH = H - padTop - padBottom;
@@ -1048,6 +1091,16 @@ function boot() {
   renderActivity();
   renderLanguages();
   renderRepos();
+
+  // charts are sized from their container, so a width change means a re-render
+  let lastWidth = window.innerWidth;
+  const ro = new ResizeObserver(() => {
+    if (window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
+    clearTimeout(ro.timer);
+    ro.timer = setTimeout(renderActivity, 120);
+  });
+  ro.observe(document.body);
 }
 
 const res = await fetch("./stats.json", { cache: "no-cache" });
