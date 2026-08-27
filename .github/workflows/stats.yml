@@ -1,0 +1,78 @@
+name: stats
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/stats.yml
+      - scripts/**
+      - docs/**
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  DASHBOARD_URL: https://rolandsusans.github.io/rolandsusans/
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fetch stats
+        env:
+          GITHUB_TOKEN: ${{ secrets.STATS_TOKEN || secrets.GITHUB_TOKEN }}
+        run: node scripts/fetch-stats.mjs
+
+      - name: Render README card
+        run: node scripts/render-card.mjs
+
+      - name: Stage dashboard payload
+        run: cp data/stats.json docs/stats.json
+
+      - name: Commit refreshed data
+        id: commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/stats.json assets/card-dark.svg assets/card-light.svg
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No stats change."
+          else
+            git commit -m "chore(stats): refresh dashboard data and README card"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

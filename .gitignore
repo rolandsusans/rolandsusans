@@ -1,0 +1,4 @@
+node_modules/
+
+# built by the stats workflow from data/stats.json
+docs/stats.json
