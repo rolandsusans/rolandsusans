@@ -58,28 +58,14 @@ fun-fact:  I tinker with ESP32 + DHT11 air sensors and Netatmo exporters
 ## 📊 GitHub stats
 
 <p align="center">
-  <a href="https://github.com/rolandsusans">
-    <img height="180" src="https://github-readme-stats.vercel.app/api?username=rolandsusans&show_icons=true&include_all_commits=true&count_private=true&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=22d3ee&icon_color=22d3ee" />
-  </a>
-  <a href="https://github.com/rolandsusans">
-    <img height="180" src="https://github-readme-streak-stats.herokuapp.com/?user=rolandsusans&theme=tokyonight&hide_border=true&background=0d1117&ring=22d3ee&fire=22d3ee&currStreakLabel=22d3ee" />
-  </a>
+  <img src="./metrics/overview.svg" width="48%" alt="Activity and repositories overview" />
+  <img src="./metrics/languages.svg" width="48%" alt="Most used languages" />
 </p>
 
 <p align="center">
-  <a href="https://github.com/rolandsusans">
-    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=rolandsusans&layout=compact&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=22d3ee&langs_count=10" />
-  </a>
+  <img src="./metrics/calendar.svg" width="96%" alt="Contributions calendar and commit streaks" />
 </p>
 
-<p align="center">
-  <a href="https://github.com/ryo-ma/github-profile-trophy">
-    <img src="https://github-profile-trophy.vercel.app/?username=rolandsusans&theme=tokyonight&no-frame=true&no-bg=true&column=7&margin-w=10" />
-  </a>
-</p>
-
-<p align="center">
-  <img src="https://github-readme-activity-graph.vercel.app/graph?username=rolandsusans&theme=tokyo-night&bg_color=0d1117&hide_border=true&line=22d3ee&point=ffffff" />
-</p>
+<p align="center"><sub>Rendered daily by <a href="https://github.com/lowlighter/metrics">lowlighter/metrics</a> into <a href="./metrics">./metrics</a> — no third-party host at read time.</sub></p>
 
 <p align="center"><sub>⚡ Built with caffeine in Riga · last polished 2026</sub></p>
