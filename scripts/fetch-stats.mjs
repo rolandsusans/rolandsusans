@@ -200,6 +200,8 @@ const stats = {
     followers: head.followers.totalCount,
     contributedTo: head.repositoriesContributedTo.totalCount,
     ownedRepos: repoCount,
+    publicRepos: repos.filter((r) => !r.isPrivate).length,
+    privateRepos: repos.filter((r) => r.isPrivate).length,
   },
   totals: {
     stars: repos.reduce((sum, r) => sum + r.stargazerCount, 0),
@@ -210,18 +212,22 @@ const stats = {
   calendar,
   years: years.map(({ days, ...rest }) => rest),
   languages: aggregateLanguages(repos),
-  repos: repos.map((r) => ({
-    name: r.name,
-    url: r.url,
-    description: r.description,
-    private: r.isPrivate,
-    archived: r.isArchived,
-    stars: r.stargazerCount,
-    forks: r.forkCount,
-    pushedAt: r.pushedAt,
-    language: r.primaryLanguage?.name ?? null,
-    languageColor: r.primaryLanguage?.color ?? null,
-  })),
+  // Private repositories count toward the totals and the language aggregate, but never
+  // reach this file by name, description, URL or push date: it is committed to a public
+  // repo and served on a public Pages site.
+  repos: repos
+    .filter((r) => !r.isPrivate)
+    .map((r) => ({
+      name: r.name,
+      url: r.url,
+      description: r.description,
+      archived: r.isArchived,
+      stars: r.stargazerCount,
+      forks: r.forkCount,
+      pushedAt: r.pushedAt,
+      language: r.primaryLanguage?.name ?? null,
+      languageColor: r.primaryLanguage?.color ?? null,
+    })),
 };
 
 await mkdir(dirname(OUT), { recursive: true });
