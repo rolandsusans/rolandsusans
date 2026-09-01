@@ -62,7 +62,7 @@ fun-fact:  I tinker with ESP32 + DHT11 air sensors and Netatmo exporters
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./assets/card-dark.svg" />
       <source media="(prefers-color-scheme: light)" srcset="./assets/card-light.svg" />
-      <img src="./assets/card-dark.svg" alt="GitHub stats: contributions in the last year, commits, pull requests, reviews, repositories and best streak" width="860" />
+      <img src="./assets/card-dark.svg" alt="GitHub stats: contributions in the last year, commits, pull requests, reviews, repositories and best streak" width="100%" />
     </picture>
   </a>
 </p>

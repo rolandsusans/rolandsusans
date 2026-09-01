@@ -39,7 +39,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 20px 64px; }
+  .wrap { max-width: 1560px; margin: 0 auto; padding: 32px 24px 64px; }
 
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
@@ -134,6 +134,8 @@
   figcaption .title { font-size: 14px; font-weight: 600; }
   figcaption .sub { color: var(--muted); font-size: 12px; }
   .plot { overflow-x: auto; overflow-y: hidden; }
+  /* charts size themselves to the box; anything narrower (capped all-time grid) sits centred */
+  .plot > svg { margin-inline: auto; }
   svg { display: block; }
   svg text { fill: var(--muted); font-family: var(--sans); font-size: 11px; }
   svg text.value { fill: var(--ink); font-size: 11px; font-weight: 600; }
@@ -547,8 +549,11 @@ function renderCalendar() {
   const strip = range.days !== null && range.days <= 90;
   const columns = range.days === null ? 54 : strip ? range.days : Math.ceil((range.days + 6) / 7);
   const labelW = range.days === null ? 42 : strip ? 0 : 30;
-  const cap = range.days === null ? 14 : strip ? 36 : 18;
-  const cell = Math.max(6, Math.min(cap, Math.floor((avail - labelW - 8) / columns) - gap));
+  // fractional cells, so the grid fills the card edge to edge instead of leaving the
+  // remainder of an integer division as dead space (SVG renders float coords fine)
+  const cap = range.days === null ? 15 : strip ? 36 : 27;
+  const fit = (avail - labelW - 2) / columns - gap;
+  const cell = Math.max(6, Math.min(cap, fit));
   const step = cell + gap;
 
   if (strip) {
@@ -569,7 +574,7 @@ function renderCalendar() {
     });
     const rowH = 7 * step + 14;
     const years = [...byYear.keys()].sort();
-    svg.setAttribute("width", Math.max(avail, labelW + 54 * step));
+    svg.setAttribute("width", labelW + 54 * step);
     svg.setAttribute("height", years.length * rowH);
     years.forEach((year, r) => {
       const top = r * rowH;
@@ -583,7 +588,7 @@ function renderCalendar() {
   } else {
     const firstCol = dayAt(from).getUTCDay();
     const cols = Math.ceil((counts.length + firstCol) / 7);
-    svg.setAttribute("width", Math.max(avail, labelW + cols * step));
+    svg.setAttribute("width", labelW + cols * step);
     svg.setAttribute("height", 7 * step + 18);
     for (const row of [1, 3, 5]) {
       svg.append(text(el("text", { x: 0, y: 18 + row * step + cell * 0.5 }), WEEKDAYS[row].slice(0, 3)));
@@ -609,7 +614,7 @@ function renderCalendar() {
 /** One square per day in a single row, with a date tick every few days. */
 function renderDayStrip({ svg, title, from, counts, th, cell, step, avail, range }) {
   const top = 22;
-  svg.setAttribute("width", Math.max(avail, counts.length * step));
+  svg.setAttribute("width", counts.length * step);
   svg.setAttribute("height", top + cell + 24);
   const every = Math.ceil(counts.length / 12);
   counts.forEach((n, i) => {
