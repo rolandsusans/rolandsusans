@@ -29,12 +29,13 @@ const THEMES = {
 };
 
 const W = 860;
-const H = 258;
+const H = 364;
 const PAD = 24;
-const WEEKS = 30;
-const CELL = 11;
-const GAP = 3;
-const STEP = CELL + GAP;
+const WEEKS = 52;
+// the grid spans ~80% of the card, centred on its own band under the hero figure
+const GAP = 2.5;
+const STEP = (0.8 * (W - PAD * 2)) / WEEKS;
+const CELL = STEP - GAP;
 
 const nf = new Intl.NumberFormat("en-US");
 const fmt = (n) => nf.format(n);
@@ -67,8 +68,8 @@ function card(stats, theme) {
   ];
 
   const gridW = WEEKS * STEP - GAP;
-  const gridX = W - PAD - gridW;
-  const gridY = 54;
+  const gridX = PAD + (W - PAD * 2 - gridW) / 2;
+  const gridY = 156;
   const gridBottom = gridY + 7 * STEP - GAP;
 
   // the last cell is today, so pad the first partial week and fill weekday rows top to bottom
@@ -91,7 +92,7 @@ function card(stats, theme) {
     .map((c, i) => `<rect x="${legendX + i * 14}" y="${legendY}" width="10" height="10" rx="2" fill="${c}"/>`)
     .join("");
 
-  const ruleY = 186;
+  const ruleY = 288;
   const colW = (W - PAD * 2) / pairs.length;
   const statCols = pairs
     .map(([label, value], i) => {
